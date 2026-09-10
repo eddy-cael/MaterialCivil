@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grafo de ecuaciones · Alcantarillado sanitario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<style>:root{--paper:#F6F4EE;--grid-line:rgba(59,97,140,.14);--ink:#6E2A3A;--ink-dark:#3E1420;--ink-soft:rgba(110,42,58,.35);--geo:#35618C;--hyd:#2F6E56;--flow:#7B2D3E;--dem:#A8752E;--growth:#5B6472;--panel-bg:#FFF;--panel-border:#DCD5C8;--text:#2A2622;--text-soft:#6B655C}*{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:'Inter',sans-serif;color:var(--text);background:var(--paper);background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:26px 26px}#app{height:100vh;display:flex;flex-direction:column}header{padding:18px 26px 14px;border-bottom:1.5px solid var(--ink);display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px}header h1{margin:0;font-size:19px;font-weight:600;letter-spacing:.2px;color:var(--ink-dark)}header p{margin:2px 0 0;font-size:13px;color:var(--text-soft)}details.notas{font-size:12.5px;color:var(--text-soft);max-width:420px}details.notas summary{cursor:pointer;color:var(--ink);font-weight:500}details.notas ul{margin:6px 0 0;padding-left:16px}details.notas li{margin-bottom:4px}main{flex:1;display:flex;min-height:0}#graph-wrap{flex:1;position:relative;min-width:0}svg#graph{width:100%;height:100%;display:block;cursor:grab}svg#graph:active{cursor:grabbing}aside{width:340px;flex:none;border-left:1.5px solid var(--ink);background:var(--panel-bg);display:flex;flex-direction:column;min-height:0}#detail{padding:18px 20px;overflow-y:auto;flex:1;border-bottom:1px solid var(--panel-border)}#detail h2{margin:0 0 4px;font-size:16px;color:var(--ink-dark)}#detail .kicker{font-size:11.5px;color:var(--text-soft);margin-bottom:12px}#detail .formula-box{background:var(--paper);border:1px solid var(--panel-border);border-radius:2px;padding:14px 10px;margin:10px 0 14px;text-align:center;overflow-x:auto}#detail .field-row{margin-bottom:10px;font-size:13px;line-height:1.5}#detail .field-row b{display:block;font-size:11px;color:var(--text-soft);font-weight:500}#detail .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.chip{font-family:'JetBrains Mono',monospace;font-size:12px;padding:3px 8px;border-radius:2px;border:1px solid var(--panel-border);background:var(--paper);cursor:pointer;color:var(--text)}.chip:hover{border-color:var(--ink)}#detail .note{font-size:12.5px;color:var(--text-soft);border-left:2px solid var(--ink-soft);padding-left:8px;margin-top:10px}#detail .empty{font-size:13px;color:var(--text-soft);line-height:1.6}#legend{padding:14px 20px;border-bottom:1px solid var(--panel-border)}#legend h3,#search h3{margin:0 0 8px;font-size:11px;color:var(--text-soft);font-weight:500}.legend-item{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:3px 0;cursor:pointer;user-select:none}.legend-item .swatch{width:11px;height:11px;border-radius:50%;flex:none}.legend-item.dimmed{opacity:.35}#search{padding:14px 20px}#search input{width:100%;padding:7px 9px;font-family:'JetBrains Mono',monospace;font-size:12.5px;border:1px solid var(--panel-border);border-radius:2px;background:var(--paper);color:var(--text)}#search input:focus{outline:none;border-color:var(--ink)}#controls{position:absolute;top:12px;left:12px;display:flex;gap:6px;z-index:5}#controls button{font-family:'Inter',sans-serif;font-size:11.5px;padding:6px 10px;border-radius:2px;border:1px solid var(--ink-soft);background:rgba(255,255,255,.85);color:var(--ink-dark);cursor:pointer}#controls button:hover{background:#fff;border-color:var(--ink)}footer{padding:6px 20px;font-size:10.5px;color:var(--text-soft);border-top:1px solid var(--panel-border)}.link{stroke:var(--ink);stroke-opacity:.38;stroke-width:1.2px;fill:none}.link.dim{stroke-opacity:.08}.link.active{stroke-opacity:.9;stroke-width:1.8px}.node{cursor:pointer}.node.dim{opacity:.22}.node.active circle,.node.active polygon{stroke-width:2.6px}.var-circle{stroke:var(--ink-dark);stroke-width:1.3px}.eq-diamond{fill:var(--ink-dark);stroke:var(--paper);stroke-width:1px}.var-label,.eq-label{pointer-events:none;color:#fff;font-size:14px;text-align:center}.var-label .katex,.eq-label .katex{color:inherit}.var-label{display:flex;align-items:center;justify-content:center;height:100%}.eq-label{display:flex;align-items:center;justify-content:center;color:var(--ink-dark);font-size:9px;line-height:1.1;opacity:.65}.eq-label .katex{font-size:.78em}.node:hover .var-circle,.node:hover .eq-diamond{filter:brightness(1.15)}.node.active .eq-label{opacity:1}.node.dim .eq-label{opacity:.15}@media(max-width:760px){main{flex-direction:column}aside{width:100%;border-left:none;border-top:1.5px solid var(--ink);max-height:46vh}#graph-wrap{flex:1 1 54vh}}</style>
+</head>
+<body>
+<div id="app">
+<header><div><h1>Grafo de ecuaciones — diseño hidráulico de alcantarillado sanitario - por Eddy Cael Mamani Canaviri - CIV 3239B</h1><p>Nodos = variables · Rombos (uniones) = ecuaciones · haz clic para ver el detalle</p></div></header>
+<main>
+<div id="graph-wrap">
+<div id="controls"><button id="btn-reset">Restablecer vista</button><button id="btn-freeze">Congelar simulación</button></div>
+<svg id="graph"></svg>
+</div>
+<aside>
+<div id="detail"><div class="empty">Haz clic en una <b>variable</b> (círculo) o en una <b>ecuación</b> (rombo) para ver su definición, unidades y relaciones.</div></div>
+<div id="legend"><h3>Categorías</h3></div>
+<div id="search"><h3>Buscar</h3><input id="search-input" type="text" placeholder="ej. tau, Manning, Q_inf..."></div>
+</aside>
+</main>
+<footer>Por Eddy Cael Mamani Canaviri.</footer>
+</div>
+<script>
+(function(){"use strict";
+const _v=[
+{id:'D',sym:'D',tex:'D',name:'Diámetro interno',unit:'m',cat:'geo'},
+{id:'theta',sym:'θ',tex:'\\theta',name:'Ángulo central',unit:'rad',cat:'geo',desc:'Ángulo subtendido en el centro por la cuerda de la superficie libre del agua.'},
+{id:'A',sym:'A',tex:'A',name:'Área mojada',unit:'m²',cat:'geo',desc:'Sección transversal ocupada por el flujo.'},
+{id:'P',sym:'P',tex:'P',name:'Perímetro mojado',unit:'m',cat:'geo'},
+{id:'R',sym:'R',tex:'R',name:'Radio hidráulico',unit:'m',cat:'geo',desc:'R = A / P.'},
+{id:'y',sym:'y',tex:'y',name:'Tirante',unit:'m',cat:'geo',desc:'Profundidad del flujo medida desde la solera.'},
+{id:'s',sym:'s',tex:'s',name:'Pendiente',unit:'m/m',cat:'hyd',desc:'Pendiente de la línea de energía (≈ pendiente de solera en régimen uniforme).'},
+{id:'L',sym:'L',tex:'L',name:'Longitud del tramo',unit:'m',cat:'hyd'},
+{id:'dV',sym:'ΔV',tex:'\\Delta V',name:'Desnivel',unit:'m',cat:'hyd',desc:'Diferencia de cota entre los extremos del tramo.'},
+{id:'tau',sym:'τ',tex:'\\tau',name:'Tensión tractiva',unit:'Pa',cat:'hyd',desc:'Tensión tractiva que el flujo ejerce sobre la pared del conducto.'},
+{id:'n',sym:'n',tex:'n',name:'Rugosidad de Manning',unit:'—',cat:'hyd'},
+{id:'V',sym:'V',tex:'V',name:'Velocidad media',unit:'m/s',cat:'hyd'},
+{id:'Q',sym:'Q',tex:'Q',name:'Caudal de diseño',unit:'L/s',cat:'flow',big:true,desc:'Nodo central: la capacidad hidráulica (A·V) y el caudal de demanda deben converger aquí durante el diseño.'},
+{id:'Dot',sym:'Dot',tex:'Dot',name:'Dotación',unit:'L/hab·día',cat:'dem'},
+{id:'Pob',sym:'Pob',tex:'Pob',name:'Población de diseño',unit:'hab',cat:'dem'},
+{id:'C',sym:'C',tex:'C',name:'Coeficiente de retorno',unit:'—',cat:'dem',desc:'Fracción del agua potable consumida que retorna como agua residual.'},
+{id:'M',sym:'M',tex:'M',name:'Coeficiente de punta',unit:'—',cat:'dem',desc:'Factor de amplificación del caudal medio de agua potable.'},
+{id:'Qmh',sym:'Q_mh',tex:'Q_{MH}',name:'Caudal máximo horario',unit:'L/s',cat:'dem'},
+{id:'Qinf',sym:'Q_INF',tex:'Q_{INF}',name:'Caudal de infiltración',unit:'L/s',cat:'dem'},
+{id:'Qce',sym:'Q_CE',tex:'Q_{CE}',name:'Caudal de conexiones erradas',unit:'L/s',cat:'dem'},
+{id:'Qdc',sym:'Q_DC',tex:'Q_{DC}',name:'Caudal de descargas concentradas',unit:'L/s',cat:'dem'},
+{id:'Qar',sym:'Q_AR',tex:'Q_{AR}',name:'Caudal de aguas residuales',unit:'L/s',cat:'dem'},
+{id:'Qap',sym:'Q_AP',tex:'Q_{AP}',name:'Caudal de agua potable',unit:'L/s',cat:'dem'},
+{id:'i',sym:'i',tex:'i',name:'Tasa de crecimiento poblacional',unit:'1/año',cat:'growth'},
+{id:'Pob0',sym:'Pob₀',tex:'Pob_0',name:'Población inicial',unit:'hab',cat:'growth'},
+{id:'d',sym:'d',tex:'d',name:'Tasa de crecimiento de la dotación',unit:'1/año',cat:'growth'},
+{id:'Dot0',sym:'Dot₀',tex:'Dot_0',name:'Dotación inicial',unit:'L/hab·día',cat:'growth'},
+{id:'t',sym:'t',tex:'t',name:'Periodo de diseño',unit:'años',cat:'growth'}
+];
+const _e=[
+{id:'Area',inputs:['D','theta'],output:'A',formula:'A=\\dfrac{D^{2}}{8}\\left(\\theta-\\sin\\theta\\right)'},
+{id:'Perímetro Mojado',inputs:['D','theta'],output:'P',formula:'P=\\dfrac{D\\,\\theta}{2}'},
+{id:'Tirante',inputs:['D','theta'],output:'y',formula:'y=\\dfrac{D}{2}\\left(1-\\cos\\dfrac{\\theta}{2}\\right)'},
+{id:'Radio hidráulico',inputs:['D','theta'],output:'R',formula:'R=\\dfrac{D}{4}\\left(1-\\dfrac{\\sin\\theta}{\\theta}\\right)',note:'Forma cerrada directa de R(D,θ).'},
+{id:'Radio hidráulico_',inputs:['A','P'],output:'R',formula:'R=\\dfrac{A}{P}',note:'Debe coincidir con R(D,θ) — útil como verificación numérica.'},
+{id:'Pendiente',inputs:['L','dV'],output:'s',formula:'s=\\dfrac{\\Delta V}{L}'},
+{id:'Tensión tractiva',inputs:['R','s'],output:'tau',formula:'\\tau=\\gamma\\,R\\,s',note:'γ ≈ 9810 N/m³, peso específico del agua.'},
+{id:'Velocidad',inputs:['n','s','R'],output:'V',formula:'V=\\dfrac{1}{n}\\,R^{2/3}\\,s^{1/2}',note:'Ecuación de Manning, unidades SI.'},
+{id:'Continuidad',inputs:['A','V'],output:'Q',formula:'Q=A\\,V',note:'Continuidad'},
+{id:'Caudal medio horario',inputs:['Dot','Pob','C','M'],output:'Qmh',formula:'Q_{MH}=\\frac{Pob\\cdot Dot\\cdot C\\cdot M}{86400}',note:'Caudal de demanda; el 86400 convierte L/hab·día a L/s.'},
+{id:'Caudal de diseño',inputs:['Qmh','Qce','Qinf','Qdc'],output:'Q',formula:'Q=\\frac{ Q_{MH}+Q_{CE}+Q_{INF}+Q_{DC}}{1000}',note:'Caudal de demanda; el 1000 convierte de L/s a m³/s.'},
+{id:'Coeficiente de retorno',inputs:['Qar','Qap'],output:'C',formula:'C=\\dfrac{Q_{ar}}{Q_{ap}}'},
+{id:'Población actual',inputs:['Pob0','i','t'],output:'Pob',formula:'Pob=Pob_{0}\\left(1+i\\right)^{t}',note:'Crecimiento geométrico.'},
+{id:'Dotación actual',inputs:['Dot0','d','t'],output:'Dot',formula:'Dot=Dot_{0}\\left(1+d\\right)^{t}',note:'Crecimiento geométrico.'},
+{id:'Harmon',inputs:['Pob'],output:'M',formula:'M=1+\\frac{14}{4+\\sqrt{\\frac{Pob}{1000}}}',note:'Factor de Punta'}
+];
+const _c={geo:{label:'Geometría de la sección',color:'#35618C'},hyd:{label:'Comportamiento hidráulico',color:'#2F6E56'},flow:{label:'Caudal (nodo central)',color:'#7B2D3E'},dem:{label:'Demanda sanitaria',color:'#A8752E'},growth:{label:'Parámetros de crecimiento poblacional',color:'#5B6472'}};
+const _vb=Object.fromEntries(_v.map(x=>[x.id,x]));
+const _n=[..._v.map(x=>({...x,type:'variable'})),..._e.map(x=>({...x,type:'equation',id:x.id,cat:_vb[x.output].cat}))];
+const _nb=Object.fromEntries(_n.map(x=>[x.id,x]));
+const _l=[];
+_e.forEach(x=>{x.inputs.forEach(y=>_l.push({source:y,target:x.id,kind:'in',eq:x.id}));_l.push({source:x.id,target:x.output,kind:'out',eq:x.id});});
+const _s=d3.select('#graph'),_w=document.getElementById('graph-wrap');
+let _W=_w.clientWidth,_H=_w.clientHeight;
+_s.attr('viewBox',[0,0,_W,_H]);
+const _z=_s.append('g');
+_s.call(d3.zoom().scaleExtent([.35,3]).on('zoom',ev=>_z.attr('transform',ev.transform)));
+const _ll=_z.append('g').attr('class','links'),_nl=_z.append('g').attr('class','nodes');
+_s.append('defs').append('marker').attr('id','arrow').attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto').append('path').attr('d','M0,-4L8,0L0,4').attr('fill','var(--ink)').attr('fill-opacity',.55);
+const _cx={geo:.12,hyd:.34,flow:.52,dem:.75,growth:.93};
+const _sim=d3.forceSimulation(_n).force('link',d3.forceLink(_l).id(d=>d.id).distance(56).strength(.85)).force('charge',d3.forceManyBody().strength(d=>d.type==='variable'?-230:-90)).force('collide',d3.forceCollide().radius(d=>d.type==='variable'?(d.big?32:24):11)).force('x',d3.forceX(d=>(_cx[d.cat]??.5)*_W).strength(.09)).force('y',d3.forceY(_H/2).strength(.025)).on('tick',_tk);
+const _ls=_ll.selectAll('line').data(_l).join('line').attr('class','link').attr('marker-end',d=>d.kind==='out'?'url(#arrow)':null);
+const _ns=_nl.selectAll('g.node').data(_n).join('g').attr('class',d=>'node '+d.type).call(d3.drag().on('start',_ds).on('drag',_dg).on('end',_de)).on('click',(ev,d)=>{ev.stopPropagation();_sel(d);}).on('dblclick',(ev,d)=>{ev.stopPropagation();d.fx=null;d.fy=null;_sim.alphaTarget(.25).restart();setTimeout(()=>_sim.alphaTarget(0),300);});
+_ns.filter(d=>d.type==='variable').append('circle').attr('class','var-circle').attr('r',d=>d.big?30:21).attr('fill',d=>_c[d.cat].color);
+_ns.filter(d=>d.type==='equation').append('polygon').attr('class','eq-diamond').attr('points','0,-9 9,0 0,9 -9,0');
+const _vl=_ns.filter(d=>d.type==='variable').append('foreignObject').attr('x',d=>d.big?-30:-21).attr('y',d=>d.big?-30:-21).attr('width',d=>d.big?60:42).attr('height',d=>d.big?60:42).append('xhtml:div').attr('class','var-label');
+const _el=_ns.filter(d=>d.type==='equation').append('foreignObject').attr('x',-85).attr('y',11).attr('width',170).attr('height',36).append('xhtml:div').attr('class','eq-label');
+_vl.each(function(d){katex.render(d.tex,this,{throwOnError:false,displayMode:false});});
+_el.each(function(d){katex.render(d.formula,this,{throwOnError:false,displayMode:false});});
+function _tk(){_ls.each(function(d){const p=_ep(d.source,d.target);this.setAttribute('x1',p.x1);this.setAttribute('y1',p.y1);this.setAttribute('x2',p.x2);this.setAttribute('y2',p.y2);});_ns.attr('transform',d=>`translate(${d.x},${d.y})`);}
+function _ep(s,t){const dx=t.x-s.x,dy=t.y-s.y,dist=Math.sqrt(dx*dx+dy*dy)||1;const rs=s.type==='variable'?(s.big?30:21):9,rt=t.type==='variable'?(t.big?30:21):9;return{x1:s.x+dx/dist*rs,y1:s.y+dy/dist*rs,x2:t.x-dx/dist*rt,y2:t.y-dy/dist*rt};}
+function _ds(ev,d){if(!ev.active)_sim.alphaTarget(.2).restart();d.fx=d.x;d.fy=d.y;}
+function _dg(ev,d){d.fx=ev.x;d.fy=ev.y;}
+function _de(ev,d){if(!ev.active)_sim.alphaTarget(0);}
+_s.on('click',()=>_cs());
+function _rs(d){const a=new Set(),b=new Set();if(d.type==='variable'){_e.forEach(x=>{if(x.output===d.id){b.add(x.id);x.inputs.forEach(y=>a.add(y));a.add(x.output);}if(x.inputs.includes(d.id)){b.add(x.id);a.add(x.output);x.inputs.forEach(y=>a.add(y));}});a.add(d.id);}else{b.add(d.id);d.inputs.forEach(y=>a.add(y));a.add(d.output);}return[a,b];}
+function _sel(d){const r=_rs(d),a=r[0],b=r[1];_ns.classed('active',n=>n.id===d.id).classed('dim',n=>n.type==='variable'?!a.has(n.id):!b.has(n.id));_ls.classed('active',l=>b.has(l.eq)).classed('dim',l=>!b.has(l.eq));d.type==='variable'?_rv(d):_re(d);}
+function _cs(){_ns.classed('active',false).classed('dim',false);_ls.classed('active',false).classed('dim',false);document.getElementById('detail').innerHTML='<div class="empty">Haz clic en una <b>variable</b> (círculo) o en una <b>ecuación</b> (rombo) para ver su definición, unidades y relaciones.</div>';}
+function _rv(v){const p=_e.filter(x=>x.output===v.id),u=_e.filter(x=>x.inputs.includes(v.id)),D=document.getElementById('detail');D.innerHTML=`<div class="kicker">VARIABLE · ${_c[v.cat].label}</div><h2 id="v-title"></h2><div class="field-row"><b>Nombre</b>${v.name}</div><div class="field-row"><b>Unidad</b>${v.unit}</div>${v.desc?`<div class="field-row"><b>Descripción</b>${v.desc}</div>`:''}${p.length?`<div class="field-row"><b>Se calcula mediante</b><div class="chips" id="chips-from"></div></div>`:'<div class="field-row"><b>Se calcula mediante</b>dato de entrada (no depende de otras variables)</div>'}${u.length?`<div class="field-row"><b>Se usa en</b><div class="chips" id="chips-to"></div></div>`:''}`;katex.render(v.tex,document.getElementById('v-title'),{throwOnError:false});if(p.length)_bc('chips-from',p);if(u.length)_bc('chips-to',u);}
+function _re(e){const o=_vb[e.output],D=document.getElementById('detail');D.innerHTML=`<div class="kicker">ECUACIÓN · produce ${o.name}</div><h2>${e.id}</h2><div class="formula-box" id="eq-formula"></div><div class="field-row"><b>Entradas</b><div class="chips" id="chips-in"></div></div><div class="field-row"><b>Salida</b><div class="chips" id="chips-out"></div></div>${e.note?`<div class="note">${e.note}</div>`:''}`;katex.render(e.formula,document.getElementById('eq-formula'),{throwOnError:false,displayMode:true});_bv('chips-in',e.inputs.map(i=>_vb[i]));_bv('chips-out',[o]);}
+function _bc(id,arr){const c=document.getElementById(id);arr.forEach(e=>{const s=document.createElement('span');s.className='chip';s.textContent=e.id;s.onclick=()=>_sel(_nb[e.id]);c.appendChild(s);});}
+function _bv(id,arr){const c=document.getElementById(id);arr.forEach(v=>{const s=document.createElement('span');s.className='chip';s.textContent=v.sym;s.onclick=()=>_sel(_nb[v.id]);c.appendChild(s);});}
+const _lg=d3.select('#legend');let _ac=null;
+Object.entries(_c).forEach(([k,c])=>{const it=_lg.append('div').attr('class','legend-item').attr('data-cat',k);it.append('div').attr('class','swatch').style('background',c.color);it.append('div').text(c.label);it.on('click',function(){_ac=(_ac===k)?null:k;_lg.selectAll('.legend-item').classed('dimmed',function(){return _ac!==null&&this.getAttribute('data-cat')!==_ac;});_ns.classed('dim',n=>_ac!==null&&n.cat!==_ac);_ls.classed('dim',l=>_ac!==null&&_nb[l.eq]?.cat!==_ac);_ns.classed('active',false);_ls.classed('active',false);});});
+document.getElementById('search-input').addEventListener('input',function(){const q=this.value.trim().toLowerCase();if(!q){_ns.classed('dim',false);_ls.classed('dim',false);_ns.classed('active',false);return;}const m=n=>(n.sym||'').toLowerCase().includes(q)||(n.name||'').toLowerCase().includes(q)||n.id.toLowerCase().includes(q);_ns.classed('dim',n=>!m(n)).classed('active',n=>m(n));_ls.classed('dim',l=>!(m(_nb[l.source.id||l.source])||m(_nb[l.target.id||l.target])));});
+document.getElementById('btn-reset').onclick=()=>{_s.transition().duration(400).call(d3.zoom().transform,d3.zoomIdentity);_n.forEach(n=>{n.fx=null;n.fy=null;});_sim.alpha(.6).restart();_cs();};
+let _fz=false;
+document.getElementById('btn-freeze').onclick=function(){_fz=!_fz;if(_fz){_sim.stop();this.textContent='Reanudar simulación';}else{_sim.alpha(.4).restart();this.textContent='Congelar simulación';}};
+window.addEventListener('resize',()=>{_W=_w.clientWidth;_H=_w.clientHeight;_s.attr('viewBox',[0,0,_W,_H]);_sim.force('x',d3.forceX(d=>(_cx[d.cat]??.5)*_W).strength(.09));_sim.force('y',d3.forceY(_H/2).strength(.025));if(!_fz)_sim.alpha(.3).restart();});
+})();
+</script>
+</body>
+</html>
